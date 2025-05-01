@@ -1,4 +1,5 @@
 import pygame
+import config
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
@@ -35,31 +36,15 @@ class Snake(pygame.sprite.Sprite):
         
              
     def move(self):
-        # if self.i += direction[0] 
-        self.i += self.direction[0]
-        self.j += self.direction[1]  
+        if self.i + self.direction[0] < config.cols and self.i + self.direction[0] > -1: 
+            self.i += self.direction[0]
+        if self.j + self.direction[1] < config.rows and self.j + self.direction[1] > -1:    
+            self.j += self.direction[1]  
         self.x = self.i * self.w + 1
         self.y = self.j * self.w + 1
     
         
-         
 
-
-    # def moveRight(self):
-    #     self.direction = [1, 0]
-    #     # self.head.x += pixels
-
-    # def moveLeft(self):
-    #     self.direction = [-1, 0]
-    #     # self.head.x -= pixels
-    
-    # def moveDown(self):
-    #     self.direction = [0, 1]
-    #     # self.head.y += pixels
-
-    # def moveUp(self):
-    #     self.direction = [0, -1]
-    #     # self.head.y -= pixels
            
     
     
