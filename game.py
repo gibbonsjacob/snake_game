@@ -13,9 +13,13 @@ pygame.font.init()
 #########################################################
 ##      SETUP
 
+frame_rate = 60
+update_interval = 200
+update_event_id = pygame.USEREVENT + 1
+pygame.time.set_timer(update_event_id, update_interval)
+
 
 GREEN = (20, 255, 140)
-
 GREY = (210, 210 ,210)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -28,9 +32,7 @@ height = 800
 
 cols = 20
 rows = 20
-w = width // cols
-# col_width = width // cols
-# row_height = height // rows 
+w = width // cols ## screen will be a square so we can just do this once
 cell_border_width = 1
 
 text_offset = 5 
@@ -95,17 +97,43 @@ def drawBoard():
  
   
 while draw:
+        keys = pygame.key.get_pressed()
+        
+        if keys[pygame.K_LEFT]:
+            snake.change_direction(move_vectors['left'])
+        if keys[pygame.K_RIGHT]:
+            snake.change_direction(move_vectors['right'])
+        if keys[pygame.K_UP]:
+            snake.change_direction(move_vectors['up'])
+        if keys[pygame.K_DOWN]:
+            snake.change_direction(move_vectors['down'])
+        
+        
+        
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 draw=False
             elif event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_x: 
                      draw=False
+                if event.key == pygame.K_LEFT:
+                    snake.change_direction(move_vectors['left'])
+                if event.key == pygame.K_RIGHT:
+                    snake.change_direction(move_vectors['right'])
+                if event.key == pygame.K_UP:
+                    snake.change_direction(move_vectors['up'])
+                if event.key == pygame.K_DOWN:
+                    snake.change_direction(move_vectors['down'])                        
+            if event.type == update_event_id:
+                snake.move()
+                                     
+
         all_sprites_list.update()
+        screen.fill((0, 0, 0))
+
         makeBoard()
         drawBoard()
-        snake.showHead(screen)
-        snake.showBody(screen)
+
         for i in range(cols):
             x = i * w  + text_offset
             for j in range(rows):
@@ -113,28 +141,31 @@ while draw:
                 ## how to show the coords if we need 
                 text_surface, rect = font.render(f"{i}, {j}", WHITE)
                 screen.blit(text_surface, (x, y))
-
-        pygame.display.flip()
-
+        
+        
+        # snake.move()
+        snake.showHead(screen)
+        snake.showBody(screen)
                  
                 
          
          
          
                 
-        keys = pygame.key.get_pressed()
+        # keys = pygame.key.get_pressed()
         
-        if keys[pygame.K_LEFT]:
-            print(move_vectors['left'])
-            Snake.change_direction(move_vectors['left'])
-        if keys[pygame.K_RIGHT]:
-            Snake.change_direction(move_vectors['right'])
-        if keys[pygame.K_UP]:
-            Snake.change_direction(move_vectors['up'])
-        if keys[pygame.K_DOWN]:
-            Snake.change_direction(move_vectors['down'])
-        
-        
-        clock.tick(5)
+        # if keys[pygame.K_LEFT]:
+        #     snake.change_direction(move_vectors['left'])
+        # if keys[pygame.K_RIGHT]:
+        #     snake.change_direction(move_vectors['right'])
+        # if keys[pygame.K_UP]:
+        #     snake.change_direction(move_vectors['up'])
+        # if keys[pygame.K_DOWN]:
+        #     snake.change_direction(move_vectors['down'])
+        # all_sprites_list.update()
+
+        pygame.display.flip()
+
+        clock.tick(frame_rate)
 
 pygame.quit() 
