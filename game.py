@@ -60,8 +60,8 @@ all_sprites_list = pygame.sprite.Group()
 
 
 
-start_i = random.randint(0, cols)
-start_j = random.randint(0, rows)
+start_i = random.randint(0, cols - 1)
+start_j = random.randint(0, rows - 1)
 
 
 
@@ -79,10 +79,9 @@ font = pygame.freetype.Font("C:\\Windows\\fonts\\Arial.ttf", text_size)
 draw = True
 clock=pygame.time.Clock()
 
-# board = []
+
 
 def makeBoard():
-    # global board
     config.board = [[0] * cols] * rows
     for i in range(cols):
         config.board[i] = []        
@@ -119,6 +118,7 @@ while draw:
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 draw=False
+                
             elif event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_x: 
                      draw=False
@@ -129,17 +129,18 @@ while draw:
                 if event.key == pygame.K_UP:
                     snake.change_direction(move_vectors['up'])
                 if event.key == pygame.K_DOWN:
-                    snake.change_direction(move_vectors['down'])                        
+                    snake.change_direction(move_vectors['down'])
+                                           
             if event.type == update_event_id:
                 snake.move()
+                
                 if snake.eats(food):
                     config.game_score += 1
                     print(config.game_score) 
                     new_food_location = choose_food_location(snake)
                     food.update_location(new_food_location)
-                    
-                    # food.i = new_food_location[0]
-                    # food.j = new_food_location[1]
+                    snake.grow()
+
                                      
 
         all_sprites_list.update()
