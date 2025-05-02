@@ -3,6 +3,9 @@ import random
 import pygame.freetype
 from snake import Snake
 from cell import Cell
+from food import choose_food_location
+from food import Food 
+import config 
 
 pygame.init()
 pygame.font.init()
@@ -26,14 +29,14 @@ RED = (255, 0, 0)
 PURPLE = (255, 0, 255)
 black = (0, 0, 0)
         
-width = 800
-height = 800
+width = config.width
+height = config.height
 
 
-cols = 20
-rows = 20
+cols = config.cols
+rows = config.rows
 w = width // cols ## screen will be a square so we can just do this once
-cell_border_width = 1
+cell_border_width = config.cell_border_width
 
 text_offset = 5 
 text_size = 12        
@@ -62,8 +65,13 @@ all_sprites_list = pygame.sprite.Group()
 start_i = random.randint(0, cols)
 start_j = random.randint(0, rows)
 
+
+
+
 snake = Snake(start_i, start_j, w)
-all_sprites_list.add(snake)
+food_coords = choose_food_location(snake)
+food = Food(food_coords[0], food_coords[1], w)
+all_sprites_list.add(snake, food)
 
 
 
@@ -73,15 +81,15 @@ font = pygame.freetype.Font("C:\\Windows\\fonts\\Arial.ttf", text_size)
 draw = True
 clock=pygame.time.Clock()
 
-board = []
+# board = []
 
 def makeBoard():
-    global board
-    board = [[0] * cols] * rows
+    # global board
+    config.board = [[0] * cols] * rows
     for i in range(cols):
-        board[i] = []        
+        config.board[i] = []        
         for j in range(rows):
-            board[i].append(Cell(i, j, w))
+            config.board[i].append(Cell(i, j, w))
 
 
 def drawBoard():
@@ -138,14 +146,23 @@ while draw:
             x = i * w  + text_offset
             for j in range(rows):
                 y = j * w  + text_offset
+                
+                if i == food.i and j == food.j: 
+                    config.board[i][j].has_food = True
+                if i == snake.i and j == snake.j:
+                    config.board[i][j].has_snake = True
+                
+                     
+                    
                 ## how to show the coords if we need 
-                text_surface, rect = font.render(f"{i}, {j}", WHITE)
-                screen.blit(text_surface, (x, y))
+                # text_surface, rect = font.render(f"{i}, {j}", WHITE)
+                # screen.blit(text_surface, (x, y))
         
         
         # snake.move()
         snake.showHead(screen)
         snake.showBody(screen)
+        food.show(screen)
                  
                 
          
