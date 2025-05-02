@@ -1,12 +1,11 @@
 import pygame 
-import snake
+from snake import Snake
 import config 
 import random 
-GREEN = (66, 255, 88)
 
 
 
-def choose_food_location(snake: snake.Snake):
+def choose_food_location(snake: Snake):
     
     options = []
     
@@ -36,10 +35,18 @@ class Food(pygame.sprite.Sprite):
         
         
     
+    def update_location(self, new_coords):
+        new_i = new_coords[0]
+        new_j = new_coords[1]
+        setattr(self, 'i', new_i)
+        setattr(self, 'j', new_j)
+        setattr(self, 'x', self.i * self.w + 1)
+        setattr(self, 'y', self.j * self.w + 1)
+    
     
     def show(self, screen):
         self.head = pygame.Rect(self.x, self.y, self.w - 1, self.w -1 )
-        pygame.draw.rect(screen, GREEN, self.head)   
+        pygame.draw.rect(screen, config.LIGHT_GREEN, self.head)   
         
         
     

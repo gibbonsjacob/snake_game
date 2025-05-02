@@ -7,6 +7,9 @@ from food import choose_food_location
 from food import Food 
 import config 
 
+
+
+
 pygame.init()
 pygame.font.init()
 
@@ -16,23 +19,23 @@ pygame.font.init()
 #########################################################
 ##      SETUP
 
-frame_rate = 60
-update_interval = 200
+frame_rate = config.frame_rate
+update_interval = config.update_interval
 update_event_id = pygame.USEREVENT + 1
 pygame.time.set_timer(update_event_id, update_interval)
 
 
-GREEN = (20, 255, 140)
-GREY = (210, 210 ,210)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-PURPLE = (255, 0, 255)
-black = (0, 0, 0)
+GREEN = config.GREEN
+WHITE = config.WHITE
+RED = config.RED
+PURPLE = config.PURPLE
+BLACK = config.BLACK
+        
+        
+        
         
 width = config.width
 height = config.height
-
-
 cols = config.cols
 rows = config.rows
 w = width // cols ## screen will be a square so we can just do this once
@@ -43,12 +46,7 @@ text_size = 12
 
 size = (width, height)
 
-move_vectors = {
-                'left': [-1, 0],
-                'right': [1, 0], 
-                'down': [0, 1],
-                'up': [0, -1]
-                }
+move_vectors = config.move_vectors
 
 ##############################################################
 
@@ -134,10 +132,18 @@ while draw:
                     snake.change_direction(move_vectors['down'])                        
             if event.type == update_event_id:
                 snake.move()
+                if snake.eats(food):
+                    config.game_score += 1
+                    print(config.game_score) 
+                    new_food_location = choose_food_location(snake)
+                    food.update_location(new_food_location)
+                    
+                    # food.i = new_food_location[0]
+                    # food.j = new_food_location[1]
                                      
 
         all_sprites_list.update()
-        screen.fill((0, 0, 0))
+        screen.fill(BLACK)
 
         makeBoard()
         drawBoard()
@@ -159,27 +165,11 @@ while draw:
                 # screen.blit(text_surface, (x, y))
         
         
-        # snake.move()
-        snake.showHead(screen)
-        snake.showBody(screen)
+        # snake.showBody(screen)
+
+
+        snake.show(screen)
         food.show(screen)
-                 
-                
-         
-         
-         
-                
-        # keys = pygame.key.get_pressed()
-        
-        # if keys[pygame.K_LEFT]:
-        #     snake.change_direction(move_vectors['left'])
-        # if keys[pygame.K_RIGHT]:
-        #     snake.change_direction(move_vectors['right'])
-        # if keys[pygame.K_UP]:
-        #     snake.change_direction(move_vectors['up'])
-        # if keys[pygame.K_DOWN]:
-        #     snake.change_direction(move_vectors['down'])
-        # all_sprites_list.update()
 
         pygame.display.flip()
 
