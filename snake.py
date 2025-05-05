@@ -12,8 +12,7 @@ def is_valid_move(curr_direction, new_direction):
     
     ## because of this, if either values from the current direction don't change in the new direction
     ## we know that a 90 degree turn could not have happened (if we have [1,0] and then [-1,0] that would be moving from right to left which is not allowed) 
-
-
+    print(curr_direction, new_direction)
     if curr_direction != [0, 0]: 
         return not ((curr_direction[0] == new_direction[0]) or (curr_direction[1] == new_direction[1]))
     else: #base case where we haven't started moving yet (when direction is [0,0])
@@ -60,33 +59,42 @@ class Snake(pygame.sprite.Sprite):
         
              
     def move(self):
-        
+        move = True
+        if self.direction != [0, 0]:
 
 
-        if self.i + self.direction[0] < config.cols and self.i + self.direction[0] > -1: 
-            self.i += self.direction[0]
-        if self.j + self.direction[1] < config.rows and self.j + self.direction[1] > -1:    
-            self.j += self.direction[1]  
-        self.x = self.i * self.w + 1
-        self.y = self.j * self.w + 1
-        
-        ## we just updated the new i and j values for the head, so now let's move every body part to where the part before it just was
-        new_body = [[self.i, self.j]]
-        for k in range(len(self.body)):
-            if k > 0:
-                new_body.append(self.body[k-1])
+            if self.i + self.direction[0] < config.cols and self.i + self.direction[0] > -1: 
+                self.i += self.direction[0]
+            else:
+                # self.direction[0] = 0
+                move = False
+            if self.j + self.direction[1] < config.rows and self.j + self.direction[1] > -1:    
+                self.j += self.direction[1]  
+            else:
+                # self.direction[1] = 0
+                move = False
+            self.x = self.i * self.w + 1
+            self.y = self.j * self.w + 1
+            
+            ## we just updated the new i and j values for the head, so now let's move every body part to where the part before it just was
+            if move:
+                new_body = [[self.i, self.j]]
+                for k in range(len(self.body)):
+                    if k > 0:
+                        new_body.append(self.body[k-1])
+            else:
+                new_body = self.body       
                 
+            ## finally, let's add in the newly eaten food as a body part if there is one
+            ## we do it this way so that the new body part spawns where the food was rather than 
+            ## at the end of the tail because there may not be a place available for it (the very last game)
+            
+            if self.next_body_location is not None:
                 
-        ## finally, let's add in the newly eaten food as a body part if there is one
-        ## we do it this way so that the new body part spawns where the food was rather than 
-        ## at the end of the tail because there may not be a place available for it (the very last game)
-        
-        if self.next_body_location is not None:
-               
-            new_body.append(self.next_body_location)
-            self.next_body_location = None                  
-        
-        self.body = new_body
+                new_body.append(self.next_body_location)
+                self.next_body_location = None                  
+                
+            self.body = new_body
 
 
         
@@ -101,7 +109,17 @@ class Snake(pygame.sprite.Sprite):
     def grow(self):
         if self.next_body_location not in self.body:
             self.body.append(self.next_body_location)
-        # print(self.body)
+    
+    
+    def collide(self):
+        ## if the head coords is in the body coords somewhere other than the first elem (which is the head)
+        return [self.i, self.j] in self.body[1:]
+            
+        
+        
+        
+        
+        
             
         
     

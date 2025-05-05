@@ -34,17 +34,19 @@ BLACK = config.BLACK
         
         
         
-width = config.width
-height = config.height
+board_width = config.board_width
+board_height = config.board_height
+scoreboard_height = config.scoreboard_height
+window_height = config.window_height
 cols = config.cols
 rows = config.rows
-w = width // cols ## screen will be a square so we can just do this once
+w = board_width // cols ## screen will be a square so we can just do this once
 cell_border_width = config.cell_border_width
 
 text_offset = 5 
 text_size = 12        
 
-size = (width, height)
+size = (board_width, board_height)
 
 move_vectors = config.move_vectors
 
@@ -55,7 +57,7 @@ move_vectors = config.move_vectors
 
 
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Car Racing")
+pygame.display.set_caption("Snake")
 all_sprites_list = pygame.sprite.Group()
 
 
@@ -92,10 +94,10 @@ def makeBoard():
 def drawBoard():
     for i in range(cols):
         x = i * w
-        pygame.draw.line(screen, WHITE, [x, 0], [x, height], cell_border_width)
+        pygame.draw.line(screen, WHITE, [x, 0], [x, board_height], cell_border_width)
     for j in range(rows):
         y = j * w
-        pygame.draw.line(screen, WHITE, [0, y], [width, y], cell_border_width)
+        pygame.draw.line(screen, WHITE, [0, y], [board_width, y], cell_border_width)
             
            
             
@@ -112,8 +114,9 @@ while draw:
             snake.change_direction(move_vectors['up'])
         if keys[pygame.K_DOWN]:
             snake.change_direction(move_vectors['down'])
-        
-        
+           
+
+
         
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -122,17 +125,18 @@ while draw:
             elif event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_x: 
                      draw=False
-                if event.key == pygame.K_LEFT:
-                    snake.change_direction(move_vectors['left'])
-                if event.key == pygame.K_RIGHT:
-                    snake.change_direction(move_vectors['right'])
-                if event.key == pygame.K_UP:
-                    snake.change_direction(move_vectors['up'])
-                if event.key == pygame.K_DOWN:
-                    snake.change_direction(move_vectors['down'])
-                                           
+
+
             if event.type == update_event_id:
                 snake.move()
+                
+                if snake.collide():
+                    snake.direction = [0, 0] 
+                    # screen.fill(BLACK)
+                    # font = pygame.freetype.Font("C:\\Windows\\fonts\\Arial.ttf", 36)
+                    # text_surface, rect = font.render('Game Over!', RED)
+                    # screen.blit(text_surface, (width // 2, height // 2))
+                    draw = False
                 
                 if snake.eats(food):
                     config.game_score += 1
@@ -165,9 +169,6 @@ while draw:
                 # text_surface, rect = font.render(f"{i}, {j}", WHITE)
                 # screen.blit(text_surface, (x, y))
         
-        
-        # snake.showBody(screen)
-
 
         snake.show(screen)
         food.show(screen)
@@ -176,4 +177,9 @@ while draw:
 
         clock.tick(frame_rate)
 
+
+screen.fill(BLACK)
+font = pygame.freetype.Font("C:\\Windows\\fonts\\Arial.ttf", 36)
+text_surface, rect = font.render('Game Over!', RED)
+screen.blit(text_surface, (board_width // 2, board_height // 2))
 pygame.quit() 

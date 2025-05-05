@@ -3,8 +3,11 @@
 
 ### Game Setup 
     
-width = 800
-height = 800
+board_width = 800
+board_height = 800
+scoreboard_height = 50
+window_height = board_height + scoreboard_height
+
 
 
 cols = 20
